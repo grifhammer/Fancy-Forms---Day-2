@@ -4,51 +4,119 @@
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<title>First Fancy Form</title>
-	<link rel="stylesheet" type="text/css" href="http://meyerweb.com/eric/tools/css/reset/reset.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 	<div class="form-wrapper">
-
-		<h1>Sign Up Now! <span>Sign up and tell us what you think of our site!</span></h1>
-
-		<div class="section">
-			<span>1</span>First Name & Address
-		</div>
-
-		<div class="inner-wrap">
-			<label for="">Your Full Name: <input type="text" name="fullName" placeholder="Your Full Name"></label>
-			<label for="">Address: <textarea name="address" placeholder="City, State, Zip"></textarea></label>
+		<form name="signUpForm" onsubmit="return (validateForm());">
 			
+
+				<h1>Sign Up Now! <span>Sign up and tell us what you think of our site!</span></h1>
+
+				<div class="section">
+					<span>1</span>First Name & Address
+				</div>
+
+				<div class="inner-wrap">
+				<div id="name-wrapper" class="form-group">
+					<label class="control-label">Your Full Name: <input type="text" class="form-control" name="fullName" placeholder="Your Full Name"></label>
+				</div>
+				<div id="address-wrapper" class="form-group">
+					<label class="control-label">Address: <textarea name="address" class="form-control" placeholder="City, State, Zip"></textarea></label>
+				</div>
+					
+				</div>
 			
-		</div>
+				<div class="section">
+					<span>2</span>Email & Phone
+				</div>
 
-		<div class="section">
-			<span>2</span>Email & Phone
-		</div>
+			<div class="inner-wrap">
+				<div id="email-wrapper" class="form-group">
+					<label>Email Address: <input class="form-control" type="email" name="emailAddress" placeholder="XXXX@XXXX.XXX"></label>
+				</div>
+				<div id="phone-wrapper" class="form-group">
+					<label>Phone Number: <input class="form-control" type="text" name="phoneNumber" placeholder="(555)555-5555"></label>
+				</div>
+			</div>
+			<div id="password-wrapper" class="form-group">
+				<div class="section">
+					<span>3</span>Password
+				</div>
 
-		<div class="inner-wrap">
-			<label>Email Address: <input type="email" name="emailAddress" placeholder="XXXX@XXXX.XXX"></label>
-			<label>Phone Number: <input type="text" name="phoneNumber" placeholder="(555)555-5555"></label>
-		</div>
-
-		<div class="section">
-			<span>3</span>Password
-		</div>
-
-		<div class="inner-wrap">
-			<label>Password: <input type="password" name="password"></label>
-			<label>Confirm Password: <input type="password" name="confirmPassword"></label>
-		</div>
-
-		<div class="button-section">
-			<input type="submit" value="Sign me up!">
-			<span class="privacy-policy">
-				<input type="checkbox" name="privacy">I agree to the Terms and Policies
-			</span>
-		</div>
-
+				<div class="inner-wrap">
+					<div id="password-wrapper" class="form-group">
+						<label>Password: <input class="form-control" type="password" name="password"></label>
+						<label>Confirm Password: <input class="form-control" type="password" name="confirmPassword"></label>
+					</div>
+				</div>
+			</div>
+			<div class="button-section">
+				<input type="submit" value="Sign me up!">
+				<span class="privacy-policy">
+					<input type="checkbox" class="form-control" name="privacy">I agree to the Terms and Policies
+				</span>
+			</div>
+		</form>
 	</div>
-	
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script type="text/javascript" src="js/bootstrap.min.js"></script>
+	<script>
+		function validateForm(){
+			var returnVal = true;
+			var message = ""
+			var emailInputVal = signUpForm.emailAddress.value;
+			var phoneInputVal = signUpForm.phoneNumber.value;
+			var passwordInputVal = signUpForm.password.value;
+			var confirmPasswordInputVal = signUpForm.confirmPassword.value;
+			var emailRegEx = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+
+			if( confirmPasswordInputVal !== passwordInputVal){
+				message+="Passwords must match";
+				signUpForm.password.focus();
+				document.getElementById('password-wrapper').className = "form-group has-error"
+				returnVal = false;
+			}else if((passwordInputVal.length > 8) || (passwordInputVal.length < 4)){
+				message+= "Your password must be between 8 and 4 characters long.\n"
+			}else if( passwordInputVal.indexOf(' ') !== -1 ){
+				message+="Your password cannot contain any spaces\n"
+			}else if( !passwordInputVal.match(/\d/) ){
+				message+="Your password must contain at least one number\n"
+			}else if( !passwordInputVal.match(/[A-Z]/) ){
+				message+="Your password must contain at least one Upper Case letter\n"
+			}else if( !passwordInputVal.match(/[a-z]/) ){
+				message+="Your password must contain at least one lower case letter\n"
+			}
+			if(phoneInputVal.match(/\d/g).length != 10){
+				message+="You must provide a valid phone number!\n"
+				signUpForm.phoneNumber.focus();
+				document.getElementById('phone-wrapper').className = "form-group has-error"
+				returnVal = false;
+			}
+			if( !( emailRegEx.test(emailInputVal) ) ) {
+				message+="You must provide valid email address!\n";
+				signUpForm.emailAddress.focus();
+				document.getElementById('email-wrapper').className = "form-group has-error"
+				returnVal = false;
+			}
+			if(signUpForm.address.value.length == 0){
+				// signupForm.address.focus();
+				message+="You must input an address\n";
+				document.getElementById('address-wrapper').className = "form-group has-error"
+				returnVal = false;
+			}
+			if(signUpForm.fullName.value.length < 4){
+				signUpForm.fullName.focus();
+				message+="You must enter your full name!\n";
+				document.getElementById('name-wrapper').className = 'form-group has-error';
+				returnVal = false;
+			}
+			if(!returnVal){
+				alert(message);
+			}
+			return returnVal;
+		}
+	</script>
 </body>
 </html>
